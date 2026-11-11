@@ -1,0 +1,15 @@
+import {horses} from './game';
+export function horse(c:CanvasRenderingContext2D,x:number,y:number,s:number,id:number,frame=0){const h=horses[id];c.save();c.translate(Math.round(x),Math.round(y));c.scale(s,s);const r=(a:number,b:number,w:number,z:number,col:string)=>{c.fillStyle=col;c.fillRect(a,b,w,z)};const k=frame%4; r(-17,11,34,3,'#513e3445');r(-14,-3,25,11,h.color);r(7,-10,8,14,h.color);r(11,-12,10,7,h.color);r(12,-15,3,5,h.color);r(19,-9,4,4,h.color);r(17,-11,2,2,'#202726');r(7,-9,3,7,'#25262a');r(-20,-4,7,3,'#302b2c');r(-22,-2,4,5,'#302b2c');r(-10,7,k%2?3:7,3,h.color);r(k%2?-11:-7,9,3,6,h.color);r(5,6,k%2?8:3,3,h.color);r(k%2?11:4,9,3,6,h.color);r(-4,-5,12,7,h.gear);r(-1,-3,4,4,'#f8f0d5');r(-1,-12,6,8,h.gear);r(3,-12,8,3,h.gear);r(7,-10,3,5,'#eac399');r(0,-18,6,6,'#edc69b');r(-1,-20,8,4,h.gear);r(1,-7,3,8,'#f1e5c9');r(2,0,7,2,'#292d29');c.restore()}
+export function scenery(c:CanvasRenderingContext2D,w:number,h:number,t=0){const r=(x:number,y:number,a:number,b:number,col:string)=>{c.fillStyle=col;c.fillRect(Math.round(x),Math.round(y),a,b)};
+// A limited, saturated 16-bit palette. All edges stay on the pixel grid.
+r(0,0,w,h,'#75c6ed');r(0,0,w,20,'#5ba9df');r(0,20,w,25,'#69b9e7');r(w*.77,8,32,32,'#fff1a0');r(w*.77-4,16,40,16,'#fff1a0');
+for(let i=0;i<6;i++){const x=((i*191-t*.003)%(w+140)+w+140)%(w+140)-85,y=14+(i%3)*9;r(x,y,61,8,'#e9f9ed');r(x+10,y-7,36,7,'#e9f9ed');r(x+17,y-11,16,5,'#e9f9ed');r(x+7,y+8,53,3,'#c6e9e6')}
+for(let i=0;i<18;i++){const x=i*65-10,y=50-(i%4)*5;r(x,y,70,28,'#328773');r(x+12,y-11,37,15,'#328773');r(x+18,y-7,25,19,'#409e73')}
+// Grandstand roofs, tiered seating and tiny animated spectators.
+for(let j=0;j<4;j++){const x=70+j*240;r(x,58,170,6,'#293c67');r(x+5,53,160,5,'#ec6852');r(x+12,49,146,4,'#ff9e6a');r(x+5,64,5,30,'#e9e9ca');r(x+159,64,5,30,'#e9e9ca')}
+r(0,76,w,23,'#43586b');r(0,84,w,3,'#7c9c94');r(0,95,w,3,'#314b57');for(let x=0;x<w;x+=11){for(let row=0;row<2;row++){const y=76+row*12-((Math.floor(t/500)+x)%5===0?2:0);r(x+2,y-3,3,3,'#efc59b');r(x,y,7,5,['#ffda68','#ed7973','#b29cde','#e5ebc7','#73c5bf'][(Math.floor(x/11)+row*2)%5])}}
+r(0,100,w,24,'#64a348');r(0,119,w,5,'#427943');for(let x=0;x<w;x+=22){r(x+3,114,2,3,'#b1cd65');r(x+7,113,2,4,'#83bd53')}r(0,101,w,4,'#fff4cf');r(0,111,w,3,'#dfd9b6');for(let x=0;x<w;x+=34)r(x,99,4,23,'#fff4cf');
+r(0,124,w,h-124,'#c9955d');for(let y=125;y<h-25;y+=33){r(0,y,w,2,'#e5b576');r(0,y+31,w,1,'#a7734b')}let rand=19;for(let i=0;i<950;i++){rand=(rand*16807)%2147483647;const x=rand%w;rand=(rand*16807)%2147483647;const y=128+rand%(h-150);r(x,y,3,1,i%2?'#e7b779':'#b27f4f')}
+// Checkered flag gantry and the starting gate.
+for(let y=124;y<h-22;y+=8)for(let a=0;a<2;a++)r(w-49+a*8,y,8,8,((y-124)/8+a)%2?'#fff4db':'#2c3e50');r(w-56,109,35,11,'#263c56');c.font='bold 7px monospace';c.fillStyle='#fff1b7';c.fillText('GOAL',w-52,117);r(52,124,4,h-146,'#fff0bf');for(let i=0;i<8;i++){r(31,128+i*33,23,3,'#4d6f75');r(31,128+i*33,3,25,'#4d6f75');r(35,130+i*33,16,2,'#82b2a7')}
+r(0,h-21,w,21,'#559449');r(0,h-17,w,4,'#fff2cf');for(let x=0;x<w;x+=36){r(x,h-20,4,20,'#fff2cf');r(x+16,h-5,3,3,'#b1cc62')}r(0,h-3,w,3,'#327246');}

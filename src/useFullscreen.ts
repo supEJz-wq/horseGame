@@ -1,0 +1,13 @@
+import {useCallback,useEffect,useState} from 'react';
+type WebkitDocument=Document & {webkitFullscreenElement?:Element;webkitExitFullscreen?:()=>Promise<void>|void};
+type WebkitElement=HTMLElement & {webkitRequestFullscreen?:()=>Promise<void>|void};
+export function useFullscreen(){
+ const [nativeTarget,setNativeTarget]=useState<Element|null>(null);const native=!!nativeTarget;const [expanded,setExpanded]=useState(false),[notice,setNotice]=useState(''),[expandedTarget,setExpandedTarget]=useState<HTMLElement|null>(null);
+ useEffect(()=>{const sync=()=>setNativeTarget(document.fullscreenElement||(document as WebkitDocument).webkitFullscreenElement||null);document.addEventListener('fullscreenchange',sync);document.addEventListener('webkitfullscreenchange',sync);sync();return()=>{document.removeEventListener('fullscreenchange',sync);document.removeEventListener('webkitfullscreenchange',sync)}},[]);
+ useEffect(()=>{if(!expanded)return;const el=expandedTarget??document.documentElement;const cls=expandedTarget?'track-expanded':'expanded-game';el.classList.add(cls);const old=document.body.style.overflow;if(expandedTarget)document.body.style.overflow='hidden';return()=>{el.classList.remove(cls);document.body.style.overflow=old}},[expanded,expandedTarget]);
+ useEffect(()=>{if(!notice)return;const t=setTimeout(()=>setNotice(''),4500);return()=>clearTimeout(t)},[notice]);
+ const exit=useCallback(async()=>{setExpanded(false);const d=document as WebkitDocument;try{if(document.fullscreenElement)await document.exitFullscreen();else if(d.webkitFullscreenElement)await d.webkitExitFullscreen?.()}catch{setNotice('Use Escape or your browser’s fullscreen control to exit.')}},[]);
+ const toggle=useCallback(async(target?:HTMLElement)=>{if(native||expanded){await exit();return}const el=(target??document.documentElement) as WebkitElement;try{if(el.requestFullscreen)await el.requestFullscreen();else if(el.webkitRequestFullscreen)await el.webkitRequestFullscreen();else throw new Error('unsupported');setNotice('Fullscreen on · Press Esc to exit');}catch{setExpandedTarget(target??null);setExpanded(true);setNotice('Browser fullscreen unavailable. Expanded view on · Press Esc to exit.')}},[native,expanded,exit]);
+ useEffect(()=>{const key=(e:KeyboardEvent)=>{if(e.key==='Escape'&&expanded){setExpanded(false);setNotice('Expanded view closed')}};window.addEventListener('keydown',key);return()=>window.removeEventListener('keydown',key)},[expanded]);
+ return {fullscreenTarget:nativeTarget??(expanded?(expandedTarget??document.documentElement):null),fullscreen:native||expanded,toggleFullscreen:toggle,fullscreenNotice:notice};
+}
